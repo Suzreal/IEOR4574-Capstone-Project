@@ -12,5 +12,7 @@ After running the program, you can go to http://127.0.0.1:5000/ to view the foll
 Please fill out all 3 required fields: Address, Cuisine, and Radius
 `
 
-#Example Showcase#
+**Example Showcase**
+
+
 <img width="1096" height="1266" alt="image" src="https://github.com/user-attachments/assets/a408e6d4-30e9-4eee-853b-9be5e2119f14" />
