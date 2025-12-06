@@ -3,7 +3,9 @@
 
 AI Engineering Capstone - NYC Restaurant Recommendation.
 
+Please download the file and run it in the terminal after all the required environments are installed.
 
+`python app.py`
 
 After running the program, you can go to http://127.0.0.1:5000/ to view the following page.
 <img width="1118" height="298" alt="image" src="https://github.com/user-attachments/assets/92005188-2ef4-45b3-9668-b58c209ede36" />
