@@ -108,4 +108,5 @@ PARISI BAKERY:
 
 
 # Example use
-![alt text](image.png)
+
+<img width="805" height="630" alt="image" src="https://github.com/user-attachments/assets/65af660c-1875-42a4-a1f1-ab36ef472530" />
