@@ -3,6 +3,8 @@
 
 AI Engineering Capstone - NYC Restaurant Recommendation.
 
+Demo Video: https://drive.google.com/file/d/1NxG0bTmmCiByYnnmC3sSJf08BKwYwWhH/view?usp=sharing
+
 Please download the file and run it in the terminal after all the required environments are installed.
 
 `python app.py`
