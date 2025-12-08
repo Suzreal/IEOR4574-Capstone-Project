@@ -3,7 +3,7 @@
 
 AI Engineering Capstone - NYC Restaurant Recommendation.
 
-Demo Video (Can only see using Lion Mail): [https://drive.google.com/file/d/1NxG0bTmmCiByYnnmC3sSJf08BKwYwWhH/view?usp=sharing](https://drive.google.com/file/d/12d2ygEYWy6nW3J6gGiGkFMc06GGXbMrJ/view?usp=sharing)
+Demo Video (Can only see using Lion Mail): (https://drive.google.com/file/d/12d2ygEYWy6nW3J6gGiGkFMc06GGXbMrJ/view?usp=sharing)
 
 Please download the file and run it in the terminal after all the required environments are installed.
 
