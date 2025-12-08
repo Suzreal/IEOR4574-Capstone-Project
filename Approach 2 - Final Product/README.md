@@ -5,7 +5,8 @@ AI Engineering Capstone - NYC Restaurant Recommendation Final Product.
 
 
 -   Please see the demo video for more details.
-
+-   `API Key is removed due to the security setting.`
+-   Please let us know if you have any questions
 
 # Top features
 -  AI recommended top dishes
