@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Restaurant Planner Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top left, #ffe5dd 0, #fff6f0 40%, #fff 90%);
+      color: #222;
+    }
+
+    .page-wrap {
+      max-width: 1080px;
+      margin: 40px auto 60px;
+      padding: 0 16px;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h1 span.logo-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff7f50, #ffb347);
+      display: inline-block;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: #777;
+      margin-bottom: 24px;
+    }
+
+    /* Form card */
+    .form-card {
+      background: #ffffffee;
+      border-radius: 22px;
+      padding: 24px 22px 20px;
+      box-shadow: 0 18px 40px rgba(255, 170, 145, 0.35);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 176, 148, 0.4);
+      margin-bottom: 28px;
+    }
+
+    .form-row {
+      margin-bottom: 18px;
+    }
+
+    .label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .label span.tag {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #fff2eb;
+      color: #ff7f50;
+      border: 1px dashed rgba(255, 127, 80, 0.6);
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      border-radius: 14px;
+      padding: 10px 13px;
+      border: 1px solid #e7d7d0;
+      font-size: 0.95rem;
+      outline: none;
+      background: #fffdfb;
+      transition: box-shadow 0.16s ease, border-color 0.16s ease, transform 0.08s ease;
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+      border-color: #ff7f50;
+      box-shadow: 0 0 0 1px rgba(255, 127, 80, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .form-inline {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .form-inline .form-row {
+      flex: 1 1 180px;
+      margin-bottom: 0;
+    }
+
+    .btn-primary {
+      width: 100%;
+      margin-top: 18px;
+      border: none;
+      border-radius: 999px;
+      padding: 13px 18px;
+      font-size: 1.02rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #ff7f50, #ffb347);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(255, 127, 80, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 32px rgba(255, 127, 80, 0.55);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 10px 20px rgba(255, 127, 80, 0.36);
+    }
+
+    .btn-primary span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    /* Error banner */
+    .alert {
+      padding: 10px 13px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      margin: 10px 2px 0;
+    }
+
+    .alert-warning {
+      background: #fff7e1;
+      color: #8a5a0a;
+      border: 1px solid #f5d48e;
+    }
+
+    .alert-error {
+      background: #ffe8e6;
+      color: #b2312b;
+      border: 1px solid #ffb7aa;
+    }
+
+    /* Results section */
+    .results-header {
+      margin-top: 30px;
+      margin-bottom: 10px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .results-header span.badge {
+      font-size: 0.8rem;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: #ffe9df;
+      color: #ff7f50;
+      border: 1px solid rgba(255, 127, 80, 0.55);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: #fffdfb;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.04);
+      border: 1px solid #f1e0d8;
+      display: flex;
+      flex-direction: column;
+      min-height: 260px;
+      transform: translateY(0);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-img-wrap {
+      position: relative;
+      height: 170px;
+      overflow: hidden;
+    }
+
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: scale(1.02);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover .card-img-wrap img {
+      transform: scale(1.07);
+    }
+
+    .img-tag {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      background: rgba(255, 250, 246, 0.92);
+      color: #ff7f50;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .img-tag span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff7f50, #ffb347);
+    }
+
+    .card-body {
+      padding: 14px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .rating-chip {
+      font-size: 0.85rem;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #fff4cd;
+      color: #8b5a00;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid #f0d27e;
+    }
+
+    .rating-chip span.star {
+      font-size: 0.98rem;
+    }
+
+    .card-meta {
+      font-size: 0.85rem;
+      color: #8b7b72;
+    }
+
+    .card-meta strong {
+      font-weight: 600;
+      color: #444;
+    }
+
+    .maps-link {
+      font-size: 0.9rem;
+      color: #ff6a50;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .maps-link:hover {
+      text-decoration: underline;
+    }
+
+    .divider {
+      margin: 10px 0;
+      border: none;
+      border-top: 1px solid #f0e2da;
+    }
+
+    .dish-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 2px 0 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dish-title span.emoji {
+      font-size: 1.1rem;
+    }
+
+    /* --- 更新后的 dish-box + 列表样式 --- */
+    .dish-box {
+      padding: 10px 14px;
+      border-radius: 18px;
+      border: 1px dashed #ffc5ba;
+      background: #fff8f4;
+      min-height: 0;
+      display: block;
+    }
+
+    .dish-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .dish-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .dish-bullet {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .dish-main {
+      font-size: 0.87rem;
+      line-height: 1.5;
+      color: #433b37;
+    }
+
+    .dish-main strong {
+      font-weight: 600;
+      color: #222;
+    }
+
+    .dish-text {
+      margin: 0;
+      font-size: 0.87rem;
+      line-height: 1.4;
+      white-space: pre-line;
+      color: #444;
+    }
+
+    .dish-error {
+      margin: 0;
+      font-size: 0.87rem;
+      color: #e46760;
+    }
+
+    .empty-state {
+      margin-top: 18px;
+      font-size: 0.95rem;
+      color: #7a6b63;
+    }
+
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 244, 240, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 4px solid #ffd5c4;
+      border-top-color: #ff7f50;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #ff7f50;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 1.9rem;
+      }
+
+      .form-card {
+        padding: 20px 16px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="spinner"></div>
+      <div class="loading-text">Cooking AI dishes for you… 🍜</div>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <h1>
+      <span class="logo-dot"></span>
+      AI Restaurant Planner
+    </h1>
+    <div class="subtitle">
+      Enter a location, pick a cuisine, and let AI discover the top spots and their signature dishes for you.
+    </div>
+
+    <!-- Search Form -->
+    <div class="form-card">
+      <form id="searchForm" method="POST" action="/search">
+        <div class="form-row">
+          <div class="label">
+            Location (Address)
+            <span class="tag">Start point</span>
+          </div>
+          <input
+            type="text"
+            name="address"
+            placeholder="Times Square, New York"
+            value="{{ address if address is defined else '' }}"
+            required
+          />
+        </div>
+
+        <div class="form-inline">
+          <div class="form-row">
+            <div class="label">
+              Cuisine Type
+              <span class="tag">Taste</span>
+            </div>
+            <select name="cuisine" required>
+              <option value="">Select cuisine</option>
+              <option value="chinese" {{ "selected" if cuisine=="chinese" else "" }}>Chinese</option>
+              <option value="french" {{ "selected" if cuisine=="french" else "" }}>French</option>
+              <option value="southeast_asian" {{ "selected" if cuisine=="southeast_asian" else "" }}>Southeast Asian</option>
+              <option value="japanese" {{ "selected" if cuisine=="japanese" else "" }}>Japanese</option>
+              <option value="korean" {{ "selected" if cuisine=="korean" else "" }}>Korean</option>
+              <option value="spanish" {{ "selected" if cuisine=="spanish" else "" }}>Spanish</option>
+              <option value="mexican" {{ "selected" if cuisine=="mexican" else "" }}>Mexican</option>
+              <option value="italian" {{ "selected" if cuisine=="italian" else "" }}>Italian</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="label">
+              Search Radius (miles)
+              <span class="tag">Scope</span>
+            </div>
+            <select name="radius">
+              {% set r = radius if radius is defined else 1 %}
+              <option value="1" {{ "selected" if r==1 or r=="1" else "" }}>1 mile</option>
+              <option value="3" {{ "selected" if r==3 or r=="3" else "" }}>3 miles</option>
+              <option value="5" {{ "selected" if r==5 or r=="5" else "" }}>5 miles</option>
+              <option value="10" {{ "selected" if r==10 or r=="10" else "" }}>10 miles</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary">
+          <span class="dot"></span>
+          Search
+        </button>
+
+        {% if error %}
+          <div class="alert alert-error" style="margin-top:14px;">
+            {{ error }}
+          </div>
+        {% elif results is defined and results is not none and results|length == 0 %}
+          <div class="alert alert-warning" style="margin-top:14px;">
+            No restaurants found for this query. Try adjusting your radius or cuisine.
+          </div>
+        {% endif %}
+      </form>
+    </div>
+
+    <!-- Results -->
+    {% if results is defined and results is not none and results|length > 0 %}
+      <div class="results-header">
+        Top picks nearby
+        <span class="badge">{{ results|length }} places</span>
+      </div>
+
+      <div class="card-grid">
+        {% for restaurant in results %}
+          <div class="card">
+            <div class="card-img-wrap">
+              {% if restaurant.photo_url %}
+                <img src="{{ restaurant.photo_url }}" alt="{{ restaurant.name }} photo" />
+              {% else %}
+                <img src="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Food image" />
+              {% endif %}
+              <div class="img-tag">
+                <span class="dot"></span>
+                Nearby favorite
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="card-title">
+                <span>{{ restaurant.name }}</span>
+                <span class="rating-chip">
+                  <span class="star">⭐</span>
+                  {{ "%.1f"|format(restaurant.rating) if restaurant.rating else "–" }}
+                  {% if restaurant.user_ratings_total %}
+                    <span style="opacity:0.7;">({{ restaurant.user_ratings_total }} reviews)</span>
+                  {% endif %}
+                </span>
+              </div>
+              <div class="card-meta">
+                <strong>Address:</strong> {{ restaurant.address }}
+              </div>
+              <a class="maps-link" href="{{ restaurant.maps_url }}" target="_blank">
+                Open in Google Maps →
+              </a>
+
+              <hr class="divider" />
+
+              <div class="dish-title">
+                AI Recommended Dishes <span class="emoji">🥢</span>
+              </div>
+              <div class="dish-box">
+                {% if restaurant.dish_recs %}
+                  <ul class="dish-list">
+                    {# 一行一个推荐菜 #}
+                    {% for line in restaurant.dish_recs.split('\n') if line.strip() %}
+                      {% set clean = line.lstrip('-–• ').strip() %}
+                      {% set parts = clean.split(' – ', 1) %}
+                      <li class="dish-item">
+                        <span class="dish-bullet">🍽️</span>
+                        <span class="dish-main">
+                          {% if parts|length == 2 %}
+                            <strong>{{ parts[0] }}</strong> – {{ parts[1] }}
+                          {% else %}
+                            {{ clean }}
+                          {% endif %}
+                        </span>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <p class="dish-error">AI dish recommendation is not available for this place yet.</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% elif results is defined and (results is none or results|length == 0) and not error %}
+      <p class="empty-state">
+        Start by entering a location and cuisine above — your AI foodie guide will handle the rest 🍽️
+      </p>
+    {% endif %}
+  </div>
+
+  <script>
+    // Simple loading overlay on form submit
+    const form = document.getElementById("searchForm");
+    const overlay = document.getElementById("loadingOverlay");
+
+    if (form && overlay) {
+      form.addEventListener("submit", function () {
+        overlay.classList.add("active");
+      });
+    }
+  </script>
+</body>
+</html>
+
